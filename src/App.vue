@@ -1,18 +1,17 @@
-<script setup> 
-//..const
-//..let
+<script setup>
+
+import ActivityOne from "./components/ActivityOne.vue";
+import ActivityTwo from "./components/ActivityTwo.vue";
+
 </script>
 
 <template>
 
-    <div>Hello World</div>
+    <h1>Activity 1</h1>
+    <ActivityOne />
+
+    <h1>Activity 2</h1>
+    <p>Calculator</p>
+    <Calculator />
 
 </template>
-
-<style>
-
-.red{
-    color: red
-}
-
-</style>
