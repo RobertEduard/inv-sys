@@ -14,10 +14,10 @@ export default {
     },
     sign() {
       this.current = this.current.charAt(0) === '-' ?
-        this.current.sliced(1) : `-${this.current}`;
+        this.current.slice(1) : `-${this.current}`;
     },
     percent() {
-      this.current = `${parseFloat(this.current) / 100}`
+      this.current = `${parseFloat(this.current) / 100}`;
     },
     append(number) {
       if (this.operatorClicked) {
@@ -47,7 +47,7 @@ export default {
       this.operator = (a, b) => a - b;
       this.setPrevious();
     },
-    plus() {
+    add() {
       this.operator = (a, b) => a + b;
       this.setPrevious();
     },
@@ -82,7 +82,7 @@ export default {
       <div @click="append('1')" class="btn">1</div>
       <div @click="append('2')" class="btn">2</div>
       <div @click="append('3')" class="btn">3</div>
-      <div @click="plus" class="btn operator">+</div>
+      <div @click="add" class="btn operator">+</div>
       <div @click="append('0')" class="btn zero">0</div>
       <div @click="dot" class="btn">.</div>
       <div @click="equal" class="btn operator">=</div>
@@ -90,7 +90,7 @@ export default {
 
 </template>
 
-<style>
+<style scoped>
 .calculator {
   margin: 0 auto;
   width: 400px;
