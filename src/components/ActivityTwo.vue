@@ -1,249 +1,122 @@
-<script setup>
-
-const display = document.querySelector("#display");
-const buttons = document.querySelectorAll("button");
-
-buttons.forEach((item) => {
-  item.onclick = () => {
-    if (item.id == "clear") {
-      display.innerText = "";
-    } else if (item.id == "backspace") {
-      let string = display.innerText.toString();
-      display.innerText = string.substr(0, string.length - 1);
-    } else if (display.innerText != "" && item.id == "equal") {
-      display.innerText = eval(display.innerText);
-    } else if (display.innerText == "" && item.id == "equal") {
-      display.innerText = "Empty!";
-      setTimeout(() => (display.innerText = ""), 2000);
-    } else {
-      display.innerText += item.id;
+<script>
+export default {
+  data() {
+    return {
+      previous: null,
+      current: '',
+      operator: null,
+      operatorClicked: false,
     }
-  };
-});
-
-const themeToggleBtn = document.querySelector(".theme-toggler");
-const calculator = document.querySelector(".calculator");
-const toggleIcon = document.querySelector(".toggler-icon");
-let isDark = true;
-themeToggleBtn.onclick = () => {
-  calculator.classList.toggle("dark");
-  themeToggleBtn.classList.toggle("active");
-  isDark = !isDark;
-};
+  },
+  methods: {
+    clear() {
+      this.current = '';
+    },
+    sign() {
+      this.current = this.current.charAt(0) === '-' ?
+        this.current.sliced(1) : `-${this.current}`;
+    },
+    percent() {
+      this.current = `${parseFloat(this.current) / 100}`
+    },
+    append(number) {
+      if (this.operatorClicked) {
+        this.current = '';
+        this.operatorClicked = false;
+      }
+      this.current = `${this.current}${number}`;
+    },
+    dot() {
+      if (this.current.indexOf(',') === -1){
+        this.append('.');
+      }
+    },
+    setPrevious() {
+      this.previous = this.current;
+      this.operatorClicked = true;
+    },
+    divide() {
+      this.operator = (a, b) => a / b;
+      this.setPrevious();
+    },
+    times() {
+      this.operator = (a, b) => a * b;
+      this.setPrevious();
+    },
+    minus() {
+      this.operator = (a, b) => a - b;
+      this.setPrevious();
+    },
+    plus() {
+      this.operator = (a, b) => a + b;
+      this.setPrevious();
+    },
+    equal() {
+      this.current = `${this.operator(
+        parseFloat(this.current), 
+        parseFloat(this.previous)
+    )}`;
+    this.previous = null;
+    }
+  }
+}
 
 </script>
 
 
 <template>
-    <div>Calculator</div>
-
-    <div class="container">
-        <div class="calculator dark">
-            <div class="theme-toggler active">
-                <i class="toggler-icon"></i>
-            </div>
-            <div class="display-screen">
-                <div id="display"></div>
-            </div>
-            <div class="buttons">
-                <table>
-                    <tr>
-                        <td><button class="btn-operator" id="clear">C</button></td>
-                        <td><button class="btn-operator" id="/">&divide;</button></td>
-                        <td><button class="btn-operator" id="*">&times;</button></td>
-                        <td><button class="btn-operator" id="backspace"></button></td>
-                    </tr>
-                    <tr>
-                        <td><button class="btn-number" id="7">7</button></td>
-                        <td><button class="btn-number" id="8">8</button></td>
-                        <td><button class="btn-number" id="9">9</button></td>
-                        <td><button class="btn-operator" id="-">-</button></td>
-                    </tr>
-                    <tr>
-                        <td><button class="btn-number" id="4">4</button></td>
-                        <td><button class="btn-number" id="5">5</button></td>
-                        <td><button class="btn-number" id="6">6</button></td>
-                        <td><button class="btn-operator" id="+">+</button></td>
-                    </tr>
-                    <tr>
-                        <td><button class="btn-number" id="1">1</button></td>
-                        <td><button class="btn-number" id="2">2</button></td>
-                        <td><button class="btn-number" id="3">3</button></td>
-                        <td rowspan="2"><button class="btn-equal" id="equal">=</button></td>
-                    </tr>
-                    <tr>
-                        <td><button class="btn-operator" id="00">00</button></td>
-                        <td><button class="btn-number" id="0">0</button></td>
-                        <td><button class="btn-operator" id=".">.</button></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+    <div class="calculator">
+      <div class="display">{{current 	|| '0'}}</div>
+      <div @click="clear" class="btn">C</div>
+      <div @click="sign" class="btn">+/-</div>
+      <div @click="percent" class="btn">%</div>
+      <div @click="divide" class="btn operator">/</div>
+      <div @click="append('7')" class="btn">7</div>
+      <div @click="append('8')" class="btn">8</div>
+      <div @click="append('9')" class="btn">9</div>
+      <div @click="times" class="btn operator">X</div>
+      <div @click="append('4')" class="btn">4</div>
+      <div @click="append('5')" class="btn">5</div>
+      <div @click="append('6')" class="btn">6</div>
+      <div @click="minus" class="btn operator">-</div>
+      <div @click="append('1')" class="btn">1</div>
+      <div @click="append('2')" class="btn">2</div>
+      <div @click="append('3')" class="btn">3</div>
+      <div @click="plus" class="btn operator">+</div>
+      <div @click="append('0')" class="btn zero">0</div>
+      <div @click="dot" class="btn">.</div>
+      <div @click="equal" class="btn operator">=</div>
     </div>
+
 </template>
 
 <style>
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    outline: 0;
-    transition: all 0.5s ease;
-}
-
-body {
-    font-family: sans-serif;
-}
-
-a {
-    text-decoration: none;
-    color: #fff;
-}
-
-body {
-    background-image: linear-gradient( to bottom right, rgba(79,51,176,1.0),rgba(210,53,165));
-}
-
-.container {
-    height: 100vh;
-    width: 100vw;
-    display: grid;
-    place-items: center;
-}
-
 .calculator {
-    position: relative;
-    height: auto;
-    width: auto;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 30px #000;
+  margin: 0 auto;
+  width: 400px;
+  font-size: 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(50px, auto);
 }
 
-.theme-toggler {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    color: #fff;
-    cursor: pointer;
-    z-index: 1;
+.display {
+  grid-column: 1 / 5;
+  background-color: #333;
+  color: white;
 }
 
-.theme-toggler.active {
-    color: #333;
+.zero {
+  grid-column:1 / 3 ;
 }
 
-.theme-toggler.active::before {
-    background-color: #fff;
+.btn {
+  background-color: #f2f2f2;
+  border: 1px solid #999;
 }
 
-.theme-toggler::before {
-    content: '';
-    height: 30px;
-    width: 30px;
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    background-color: #333;
-    z-index: -1;
+.opertor {
+  background-color: orange;
+  color: white;
 }
-
-#display {
-    margin: 0 10px;
-    height: 150px;
-    width: auto;
-    max-width: 270px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-    font-size: 30px;
-    margin-bottom: 20px;
-    overflow-x: scroll;
-  }
-
-#display::-webkit-scrollbar {
-    display: block;
-    height: 3px;
-}
-
-button {
-    height: 60px;
-    width: 60px;
-    border: 0;
-    border-radius: 30px;
-    margin: 5px;
-    font-size: 20px;
-    cursor: pointer;
-    transition: all 200ms ease;
-}
-
-button:hover {
-    transform: scale(1.1);
-}
-
-button#equal {
-    height: 130px;
-}
-
-/* light theme */
-
-.calculator {
-    background-color: #fff;
-}
-
-.calculator #display {
-    color: #0a1e23;
-}
-
-.calculator button#clear {
-    background-color: #ffd5d8;
-    color: #fc4552;
-}
-
-.calculator button.btn-number {
-    background-color: #c3eaff;
-    color: #000000;
-}
-
-.calculator button.btn-operator {
-    background-color: #ffd0fb;
-    color: #f967f3;
-  }
-
-  .calculator button.btn-equal {
-    background-color: #adf9e7;
-    color: #000;
-  }
-
-  /* dark theme */
-
-  .calculator.dark {
-    background-color: #071115;
-  }
-
-  .calculator.dark #display {
-    color: #f8fafb;
-  }
-
-  .calculator.dark button#clear {
-    background-color: #2d191e;
-    color: #bd3740;
-  }
-
-  .calculator.dark button.btn-number {
-    background-color: #1b2f38;
-    color: #f8fafb;
-  }
-
-  .calculator.dark button.btn-operator {
-    background-color: #2e1f39;
-    color: #aa00a4;
-  }
-
-  .calculator.dark button.btn-equal {
-    background-color: #223323;
-    color: #ffffff;
-  }
-
 </style>
