@@ -12,6 +12,6 @@ import ActivityTwo from "./components/ActivityTwo.vue";
 
     <h1>Activity 2</h1>
     <p>Calculator</p>
-    <Calculator />
+    <ActivityTwo />
 
 </template>
